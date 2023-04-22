@@ -20,7 +20,6 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 
-
 This will install the required dependencies, migrate the database, and start the backend server. The backend APIs can be accessed by sending HTTP requests to `http://localhost:8000/api`.
 
 ## License
