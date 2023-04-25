@@ -7,15 +7,35 @@ from .serializers import Task_serializer, User_serializer
 
 
 
+a_user = App_user.objects.all()
 
 # Create your views here.
 class Login_view(APIView):
     #FOR GET REQUEST 
-    def get(request):
-        pass
+    def post(self, request, format=None):
+        serializer = User_serializer(data=request.data)
+        if serializer.is_valid():
+            try : 
+                i_username = serializer.validated_data['user_name']
+                i_password = serializer.validated_data['password']
 
-    #FOR POST REQUEST
-    def post(request):
-        pass
+                users = App_user.objects.get(user_name=i_username, password=i_password)
+                return Response({'success' : 'Login worked'}, status=status.HTTP_200_OK)
 
-    
+            except Exception:
+                return Response({'Failure' : 'login failed'}, status=status.HTTP_401_UNAUTHORIZED)
+        else :
+
+            return Response({'Invalid data inputed'}, status=status.HTTP_400_BAD_REQUEST)
+            
+class Sign_up(APIView):
+    def post(self, request):
+        serializer = User_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'success' : 'User has been created'}, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response({'failure' : 'Invalid'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
