@@ -20,7 +20,11 @@ class Login_view(APIView):
                 i_password = serializer.validated_data['password']
 
                 users = App_user.objects.get(user_name=i_username, password=i_password)
-                return Response({'success' : 'Login worked'}, status=status.HTTP_200_OK)
+                if users : 
+                    return Response({'success' : 'Login worked'}, status=status.HTTP_200_OK)
+                else :
+                    return Response({'Failure' : 'didnt work'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+
 
             except Exception:
                 return Response({'Failure' : 'login failed'}, status=status.HTTP_401_UNAUTHORIZED)
