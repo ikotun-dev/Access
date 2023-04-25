@@ -28,8 +28,8 @@ class Login_view(APIView):
 
             except Exception:
                 return Response({'Failure' : 'login failed'}, status=status.HTTP_401_UNAUTHORIZED)
+    
         else :
-
             return Response({'Invalid data inputed'}, status=status.HTTP_400_BAD_REQUEST)
             
 class Sign_up(APIView):
