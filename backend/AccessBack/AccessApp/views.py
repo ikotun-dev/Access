@@ -32,15 +32,36 @@ class Login_view(APIView):
             else:
                 return Response({'Failure': 'didnt work'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         else:
+
             return Response({'Invalid data inputed'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+#View for adding task througth the API 
 class AddTask(APIView):
     #posting - adding a new task
     def post(self, request, format=None):
         serializer = Task_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            
+
+            print("TASK ADDED SUCCESSFULLY")
+            return Response({'success'  : 'task added successfully'}, status=status.HTTP_201_CREATED)
+
+        else :
+            return Response({'Failure'  : 'task couldnt be added '}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+
+#view for getting tasks 
+class get_task(APIView):
+
+    #getter for getting the tasks :
+    def get(self, request):
+        serializer = Task_serializer(data=request.data)
+        pass
+    
+        
 
 
 
