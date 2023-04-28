@@ -35,8 +35,6 @@ class Login_view(APIView):
 
             return Response({'Invalid data inputed'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 #View for adding task througth the API 
 class AddTask(APIView):
     #posting - adding a new task
@@ -58,12 +56,21 @@ class get_task(APIView):
 
     #getter for getting the tasks :
     def get(self, request):
-        serializer = Task_serializer(data=request.data)
-        pass
-    
-        
+        all_tasks = Task.objects.all()
+        serializer = Task_serializer(all_tasks, many=True)
 
+        print("Get tasks successful")
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
+#view for deleteing task
+class delete_task(APIView):
+    #deleter for deleting the task 
+    def delete(self, request, id):
+        #task to delete
+        task_to_delete = Task.objects.get(id=id)
+        task_to_delete.delete()
+
+        return Response({'info' : 'Task has been deleted'}, status=status.HTTP_200_OK)
 
 
 class Sign_up(APIView):
