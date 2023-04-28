@@ -12,10 +12,11 @@ class App_user(models.Model):
     
 ##the TASK 
 class Task(models.Model):
+    id = models.AutoField(primary_key=True)
     description = models.CharField(max_length=400)
     detail = models.CharField(max_length=400)
     reminder = models.BooleanField(default=False)
 
-    
+
 
     
