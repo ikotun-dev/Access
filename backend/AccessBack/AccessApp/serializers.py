@@ -12,5 +12,5 @@ class User_serializer(serializers.ModelSerializer):
 class Task_serializer(serializers.ModelSerializer):
     class Meta :
         model = Task
-        fields = ('description', 'detail', 'reminder')
+        fields = ('id','description', 'detail', 'reminder')
         
