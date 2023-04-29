@@ -7,7 +7,7 @@ class App_user(models.Model):
     password = models.CharField(max_length=300)
 
     def __str__(self):
-        return f"self.user_name"
+        return f'{self.user_name}'
 
 #the TASK 
 class Task(models.Model):
@@ -18,5 +18,6 @@ class Task(models.Model):
     reminder = models.BooleanField(default=False)
 
 
-
+    def __str__(self):
+        return f"{self.description}"
     

@@ -73,6 +73,7 @@ class get_task(APIView):
         
              # Serialize the filtered tasks
         serializer = Task_serializer(tasks, many=True)
+        print("gotten")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
