@@ -58,22 +58,21 @@ class AddTask(APIView):
             return Response({'Failure'  : 'task couldnt be added '}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
-
 #view for getting tasks 
 class get_task(APIView):
-
     def get(self, request, id):
+        if not id or not isinstance(id, int):
+            return Response({'error': 'Invalid ID'}, status=status.HTTP_400_BAD_REQUEST)
+
         # Get the App_user object with the given id
         # try:
-        #     app_user = App_user.objects.get(pk=id)
-        # except App_user.DoesNotExist:
-        #     return Response({"message": f"User with id {id} does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        #the owner field
+        # else :
 
-        # Filter tasks by the owner field
         tasks = Task.objects.filter(owner__id=id)
         
-        # Serialize the filtered tasks
-        serializer = Task_send_serializer(tasks, many=True)
+             # Serialize the filtered tasks
+        serializer = Task_serializer(tasks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -83,7 +82,7 @@ def get_last_task():
         task = Task.objects.latest('id')
    
         return task.description
-        
+
     except Task.DoesNotExist:
         return None
 
