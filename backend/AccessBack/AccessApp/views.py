@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status 
 from .models import Task, App_user
-from .serializers import Task_serializer, User_serializer
+from .serializers import Task_serializer, User_serializer, Task_send_serializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 a_user = App_user.objects.all()
@@ -42,6 +42,7 @@ class Login_view(APIView):
         else:
             return Response({'Invalid data inputed'}, status=status.HTTP_400_BAD_REQUEST)
 
+
 #View for adding task througth the API 
 class AddTask(APIView):
     #posting - adding a new task
@@ -63,16 +64,16 @@ class get_task(APIView):
 
     def get(self, request, id):
         # Get the App_user object with the given id
-        try:
-            app_user = App_user.objects.get(pk=id)
-        except App_user.DoesNotExist:
-            return Response({"message": f"User with id {id} does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        # try:
+        #     app_user = App_user.objects.get(pk=id)
+        # except App_user.DoesNotExist:
+        #     return Response({"message": f"User with id {id} does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         # Filter tasks by the owner field
-        tasks = Task.objects.filter(owner=app_user)
-
+        tasks = Task.objects.filter(owner__id=id)
+        
         # Serialize the filtered tasks
-        serializer = Task_serializer(tasks, many=True)
+        serializer = Task_send_serializer(tasks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -80,7 +81,9 @@ class get_task(APIView):
 def get_last_task():
     try:
         task = Task.objects.latest('id')
-        return task
+   
+        return task.description
+        
     except Task.DoesNotExist:
         return None
 
