@@ -26,7 +26,9 @@ class Login_view(APIView):
                 response = {
                     'success' : 'Login Worked',
                     'refresh' : str(refresh),
-                    'access' : str(access_token)
+                    'access' : str(access_token),
+                    'user' : i_username,
+                    'user_last_task' : 'abc',
                 }
                 return Response(response, status=status.HTTP_200_OK)
             else:
