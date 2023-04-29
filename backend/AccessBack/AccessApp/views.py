@@ -20,6 +20,7 @@ class Login_view(APIView):
             i_password = serializer.validated_data['password']
 
             users = App_user.objects.get(user_name=i_username, password=i_password)
+            #if statement
             if users:
                 refresh = RefreshToken.for_user(users)
                 access_token = refresh.access_token
@@ -29,13 +30,16 @@ class Login_view(APIView):
                     'refresh' : str(refresh),
                     'access' : str(access_token),
                     'user' : i_username,
-                    'user_last_task' : 'abc',
+                    'user_id': users.id,
+                    'user_last_task' : get_last_task(),
+
                 }
                 return Response(response, status=status.HTTP_200_OK)
+            #else statement 
             else:
                 return Response({'Failure': 'didnt work'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-        else:
 
+        else:
             return Response({'Invalid data inputed'}, status=status.HTTP_400_BAD_REQUEST)
 
 #View for adding task througth the API 
@@ -55,17 +59,6 @@ class AddTask(APIView):
 
 
 #view for getting tasks 
-# class get_task(APIView):
-
-#     #getter for getting the tasks :
-#     def get(self, request, id):
-#         all_tasks = Task.objects.all()
-#         serializer = Task_serializer(all_tasks, many=True)
-
-#         print("Get tasks successful")
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class get_task(APIView):
 
     def get(self, request, id):
@@ -81,6 +74,15 @@ class get_task(APIView):
         # Serialize the filtered tasks
         serializer = Task_serializer(tasks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+#function to get the latest task 
+def get_last_task():
+    try:
+        task = Task.objects.latest('id')
+        return task
+    except Task.DoesNotExist:
+        return None
 
 
 #view for deleteing task
