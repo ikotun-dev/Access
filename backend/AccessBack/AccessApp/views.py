@@ -23,6 +23,7 @@ class Login_view(APIView):
             if users:
                 refresh = RefreshToken.for_user(users)
                 access_token = refresh.access_token
+                print(users.id)
                 response = {
                     'success' : 'Login Worked',
                     'refresh' : str(refresh),
@@ -54,15 +55,33 @@ class AddTask(APIView):
 
 
 #view for getting tasks 
+# class get_task(APIView):
+
+#     #getter for getting the tasks :
+#     def get(self, request, id):
+#         all_tasks = Task.objects.all()
+#         serializer = Task_serializer(all_tasks, many=True)
+
+#         print("Get tasks successful")
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class get_task(APIView):
 
-    #getter for getting the tasks :
-    def get(self, request):
-        all_tasks = Task.objects.all()
-        serializer = Task_serializer(all_tasks, many=True)
+    def get(self, request, id):
+        # Get the App_user object with the given id
+        try:
+            app_user = App_user.objects.get(pk=id)
+        except App_user.DoesNotExist:
+            return Response({"message": f"User with id {id} does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-        print("Get tasks successful")
+        # Filter tasks by the owner field
+        tasks = Task.objects.filter(owner=app_user)
+
+        # Serialize the filtered tasks
+        serializer = Task_serializer(tasks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 #view for deleteing task
 class delete_task(APIView):

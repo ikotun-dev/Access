@@ -11,6 +11,7 @@ class App_user(models.Model):
 #the TASK 
 class Task(models.Model):
     id = models.AutoField(primary_key=True)
+    owner = models.ForeignKey(App_user, on_delete=models.CASCADE, default=None)
     description = models.CharField(max_length=400)
     detail = models.CharField(max_length=400)
     reminder = models.BooleanField(default=False)
