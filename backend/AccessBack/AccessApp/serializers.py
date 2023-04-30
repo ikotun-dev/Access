@@ -8,9 +8,27 @@ class User_serializer(serializers.ModelSerializer):
         fields = ('user_name', 'password')
 
 
-class Task_serializer(serializers.ModelSerializer):
-    owner_id = serializers.PrimaryKeyRelatedField(source='owner', queryset=App_user.objects.all())
 
+
+class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ('id', 'owner_id', 'description', 'detail', 'date', 'reminder')
+        fields = '__all__'
+        read_only_fields = ['id']
+
+    def create(self, validated_data):
+        user_id = self.context.get('user_id')
+        owner = App_user.objects.get(id=user_id)
+        validated_data['owner'] = owner
+        return super().create(validated_data)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['owner_id'] = instance.owner.id
+        return representation
+
+    def to_internal_value(self, data):
+        internal_value = super().to_internal_value(data)
+        user_id = self.context.get('user_id')
+        internal_value['owner'] = App_user.objects.get(id=user_id)
+        return internal_value
