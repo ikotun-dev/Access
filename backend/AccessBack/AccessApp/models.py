@@ -15,6 +15,7 @@ class Task(models.Model):
     owner = models.ForeignKey(App_user, on_delete=models.CASCADE, default=None)
     description = models.CharField(max_length=400)
     detail = models.CharField(max_length=400)
+    date = models.DateField(default=None)
     reminder = models.BooleanField(default=False)
 
 
