@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status 
 from .models import Task, App_user
-from .serializers import Task_serializer, User_serializer, Task_send_serializer
+from .serializers import Task_serializer, User_serializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 a_user = App_user.objects.all()
@@ -31,7 +31,7 @@ class Login_view(APIView):
                     'access' : str(access_token),
                     'user' : i_username,
                     'user_id': users.id,
-                    'user_last_task' : get_last_task(),
+                    'user_last_task' : get_last_task(users.id),
 
                 }
                 return Response(response, status=status.HTTP_200_OK)
@@ -45,18 +45,18 @@ class Login_view(APIView):
 
 #View for adding task througth the API 
 class AddTask(APIView):
-    #posting - adding a new task
-    def post(self, request, format=None):
+    """
+    View to add a new Task object.
+    """
+    def post(self, request, id, format=None):
+        owner = App_user.objects.get(id=id)
+        # data = request.data.copy()
+        # request.data['owner_id'] = owner.id
         serializer = Task_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-
-            print("TASK ADDED SUCCESSFULLY")
-            return Response({'success'  : 'task added successfully'}, status=status.HTTP_201_CREATED)
-
-        else :
-            return Response({'Failure'  : 'task couldnt be added '}, status=status.HTTP_406_NOT_ACCEPTABLE)
-
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #view for getting tasks 
 class get_task(APIView):
@@ -78,11 +78,12 @@ class get_task(APIView):
 
 
 #function to get the latest task 
-def get_last_task():
+def get_last_task(id):
     try:
-        task = Task.objects.latest('id')
+        task = Task.objects.filter(owner__id=id)
+        tasky = task.latest('id')
    
-        return task.description
+        return tasky.description
 
     except Task.DoesNotExist:
         return None
