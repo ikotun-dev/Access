@@ -10,6 +10,7 @@ urlpatterns = [
     path('add-task/<int:id>/', views.AddTask.as_view()),
     path('get-tasks/<int:id>/', views.get_task.as_view()),
     path('delete-task/<int:id>', views.delete_task.as_view()),
+    path('edit', views.get_task.as_view()),
 
 ]
 
