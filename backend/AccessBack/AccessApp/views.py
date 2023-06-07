@@ -7,6 +7,7 @@ from .models import Task, App_user
 from .serializers import TaskSerializer, User_serializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
+
 a_user = App_user.objects.all()
 
 class Login_view(APIView):
@@ -42,25 +43,6 @@ class Login_view(APIView):
         else:
             return Response({'Invalid data inputed'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-#View for adding task througth the API 
-# class AddTask(APIView):
-#     """
-#     View to add a new Task object.
-#     """
-#     def post(self, request, id, format=None):
-#         owner = App_user.objects.get(id=id)
-        
-#         # data = request.data.copy()
-#         # request.data['owner_id'] = owner.id
-#         serializer = Task_serializer(data=request.data)
-        
-
-#         if serializer.is_valid():
-#             print(serializer.validated_data)
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AddTask(APIView):
     """
@@ -108,6 +90,24 @@ class delete_task(APIView):
         task_to_delete.delete()
 
         return Response({'info' : 'Task has been deleted'}, status=status.HTTP_200_OK)
+
+
+#update a task
+class update_task(APIView):
+    def put(self, request, id) :
+    
+        try:
+            task_to_update = Task.objects.get(id=id)
+        except Task.DoesNotExist:
+            return Response({"error": "Task not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = TaskSerializer(task_to_update, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class Sign_up(APIView):
